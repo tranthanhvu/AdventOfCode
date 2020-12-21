@@ -1,5 +1,5 @@
 import UIKit
-func process(list: [String]) -> Int {
+func processPart1(list: [String]) -> Int {
 
     var result = 0
     
@@ -23,6 +23,30 @@ func process(list: [String]) -> Int {
         
         if count >= min && count <= max {
             result += 1
+        }
+    }
+    
+    return result
+}
+
+func processPart2(list: [String]) -> Int {
+
+    var result = 0
+    
+    list.forEach { (item) in
+        let elements = item.split { "-: ".contains($0)}
+        let min = (Int(elements[0]) ?? 1) - 1
+        let max = (Int(elements[1]) ?? 1) - 1
+        let char = Character(String(elements[2]))
+        let text = elements[3]
+        
+        if text.count > max {
+            let firstChar = text[text.index(text.startIndex, offsetBy: min)]
+            let secondChar = text[text.index(text.startIndex, offsetBy: max)]
+            
+            if (firstChar == char && secondChar != char) || (firstChar != char && secondChar == char) {
+                result += 1
+            }
         }
     }
     
@@ -1035,5 +1059,8 @@ let data =
 
 let list = data.components(separatedBy: .newlines)
 
-let max = process(list: list)
-print(max)
+//let max = processPart1(list: list)
+//print(max)
+let max2 = processPart2(list: list)
+print(max2)
+
