@@ -1,37 +1,4 @@
-func process(list: [Int]) -> Int {
-    let sortedList = list.sorted()
-
-    var max = 0
-    var startIndex = 0
-    var endIndex = sortedList.count - 1
-
-    while startIndex < endIndex {
-        let first = sortedList[startIndex]
-        let second = sortedList[endIndex]
-        
-        let sum = first + second
-        if sum == 2020 {
-            let multiplying = first * second
-            if multiplying > max {
-                max = multiplying
-            }
-            
-            startIndex += 1
-            endIndex -= 1
-        }
-        else if sum < 2020 {
-            startIndex += 1
-        }
-        else {
-            endIndex -= 1
-        }
-    }
-    
-    return max
-}
-
-
-var list = [1753, 
+var list = [1753,
             1858,
             1860,
             1978,
@@ -232,5 +199,67 @@ var list = [1753,
             1765,
             1572]
 
-let max = process(list: list)
+func process(sortedList: [Int], target: Int) -> Int {
+    var max = 0
+    var startIndex = 0
+    var endIndex = sortedList.count - 1
+
+    while startIndex < endIndex {
+        let first = sortedList[startIndex]
+        let second = sortedList[endIndex]
+        
+        let sum = first + second
+        if sum == target {
+            let multiplying = first * second
+            if multiplying > max {
+                max = multiplying
+            }
+            
+            startIndex += 1
+            endIndex -= 1
+        }
+        else if sum < target {
+            startIndex += 1
+        }
+        else {
+            endIndex -= 1
+        }
+    }
+    
+    return max
+}
+
+func processPart1(list: [Int]) -> Int {
+    let sortedList = list.sorted()
+
+    return process(sortedList: sortedList, target: 2020)
+}
+
+func processPart2(list: [Int]) -> Int {
+    let sortedList = list.sorted()
+
+    var max = 0
+    for i in 0..<sortedList.count - 2 {
+        let number = sortedList[i]
+        let begin = sortedList[i+1]
+        let end = sortedList[sortedList.count - 1]
+        
+        let target = 2020 - number
+        
+        if begin + end >= target && begin < target {
+            let sub = [Int](sortedList.suffix(from: i+1))
+            
+            let result = process(sortedList: sub, target: target)
+            
+            let multiplying = number * result
+            if multiplying > max {
+                max = multiplying
+            }
+        }
+    }
+   
+    return max
+}
+
+let max = processPart2(list: list)
 print(max)
