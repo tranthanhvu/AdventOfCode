@@ -29,13 +29,13 @@
 let text = Utility.readFile(name: "Day04")
 let day = Day04(text: text)
 
-Utility.evaluate {
-    day.run01()
-}
-//
 //Utility.evaluate {
-//    day.run02()
+//    day.run01()
 //}
+
+Utility.evaluate {
+    day.run02()
+}
 
 /// ______________________________________________
 /// - Day 22

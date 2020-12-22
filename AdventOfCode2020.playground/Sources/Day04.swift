@@ -39,8 +39,75 @@ struct Passport {
         }
     }
     
+    init(validationData data: String) {
+        let elements = data.components(separatedBy: .whitespaces)
+        for e in elements {
+            let key = e.prefix(3)
+            let value = String(e.suffix(from: e.index(e.startIndex, offsetBy: 4)))
+            switch key {
+            case "byr":
+                let v = Int(value) ?? 0
+                if v >= 1920 && v <= 2002 {
+                    self.byr = value
+                }
+                
+            case "iyr":
+                let v = Int(value) ?? 0
+                if v >= 2010 && v <= 2020 {
+                    self.iyr = value
+                }
+                
+            case "eyr":
+                let v = Int(value) ?? 0
+                if v >= 2020 && v <= 2030 {
+                    self.eyr = value
+                }
+            case "hgt":
+                if value.hasSuffix("cm") {
+                    let v = Int(value.prefix(upTo: value.index(value.endIndex, offsetBy: -2))) ?? 0
+                    if v >= 150 && v <= 193 {
+                        self.hgt = value
+                    }
+                } else if value.hasSuffix("in") {
+                    let v = Int(value.prefix(upTo: value.index(value.endIndex, offsetBy: -2))) ?? 0
+                    if v >= 59 && v <= 76 {
+                        self.hgt = value
+                    }
+                }
+                
+            case "hcl":
+                if value.count == 7 {
+                    let regex = try! NSRegularExpression(pattern: "^#[a-z0-9]{6}")
+                    let range = NSRange(location: 0, length: 7)
+                    if regex.firstMatch(in: value, options: [], range: range) != nil {
+                        self.hcl = value
+                    }
+                }
+                
+            case "ecl":
+                let list = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+                
+                if value.count == 3 && list.contains(value) {
+                    self.ecl = value
+                }
+                
+            case "pid": self.pid = value
+                if value.count == 9 {
+                    let regex = try! NSRegularExpression(pattern: "[0-9]{9}")
+                    let range = NSRange(location: 0, length: 9)
+                    if regex.firstMatch(in: value, options: [], range: range) != nil {
+                        self.pid = value
+                    }
+                }
+            case "cid": self.cid = value
+            default: break
+            }
+        }
+    }
+    
     func description() -> String {
         let list = [self.byr, self.iyr, self.eyr, self.hgt, self.hcl, self.ecl, self.pid, self.cid].compactMap({ $0 })
+
         return list.joined(separator: " ")
     }
 }
@@ -67,30 +134,6 @@ public class Day04 {
         print("run02: \(processPart2(data: data))")
     }
     
-    func process(lines: [String], ruleX: Int, ruleY: Int) -> Int {
-        var count = 0
-        
-        let maxRow = lines.first?.count ?? 0
-        let tree = Character("#")
-        var currentX = 0
-        var currentY = 0
-        
-        while currentY < lines.count {
-            
-            let line = lines[currentY]
-            let char = line[line.index(line.startIndex, offsetBy: currentX)]
-            
-            if char == tree {
-                count += 1
-            }
-            
-            currentX = (currentX + ruleX) % maxRow
-            currentY = currentY + ruleY
-        }
-        
-        return count
-    }
-    
     func processPart1(data: [String]) -> Int {
         let passwords = data.map({ Passport(data: $0) })
             .compactMap({ $0.isInvalid ? nil : $0 })
@@ -99,12 +142,9 @@ public class Day04 {
     }
     
     func processPart2(data: [String]) -> Int {
-        let slope1 = process(lines: data, ruleX: 1, ruleY: 1)
-        let slope2 = process(lines: data, ruleX: 3, ruleY: 1)
-        let slope3 = process(lines: data, ruleX: 5, ruleY: 1)
-        let slope4 = process(lines: data, ruleX: 7, ruleY: 1)
-        let slope5 = process(lines: data, ruleX: 1, ruleY: 2)
-       
-        return slope1 * slope2 * slope3 * slope4 * slope5
+        let passwords = data.map({ Passport(validationData: $0) })
+            .compactMap({ $0.isInvalid ? nil : $0 })
+        print(passwords.map({ $0.description() }).joined(separator: "\n"))
+        return passwords.count
     }
 }
