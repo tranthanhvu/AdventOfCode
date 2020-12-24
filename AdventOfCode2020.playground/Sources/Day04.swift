@@ -91,7 +91,7 @@ struct Passport {
                     self.ecl = value
                 }
                 
-            case "pid": self.pid = value
+            case "pid":
                 if value.count == 9 {
                     let regex = try! NSRegularExpression(pattern: "[0-9]{9}")
                     let range = NSRange(location: 0, length: 9)
@@ -144,7 +144,7 @@ public class Day04 {
     func processPart2(data: [String]) -> Int {
         let passwords = data.map({ Passport(validationData: $0) })
             .compactMap({ $0.isInvalid ? nil : $0 })
-        print(passwords.map({ $0.description() }).joined(separator: "\n"))
+        
         return passwords.count
     }
 }
