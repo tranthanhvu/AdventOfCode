@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-/// Ref: https://adventofcode.com/2022/day/10
+/// Ref: https://adventofcode.com/2022/day/1
 func arrayManipulation(n: Int, queries: [[Int]]) -> Int {
     var list = [Int].init(repeating: 0, count: n)
     var max = 0
